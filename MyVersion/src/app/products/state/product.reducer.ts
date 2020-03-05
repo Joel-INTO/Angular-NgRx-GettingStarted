@@ -11,12 +11,14 @@ export interface ProductState {
     showProductCode: boolean;
     currentProduct: Product;
     products: Product[];
+    error: string;
 }
 
 const initialState: ProductState = {
     showProductCode: true,
     currentProduct: null,
     products: [],
+    error: ''
 };
 
 const getProductFeatureState = createFeatureSelector<ProductState>('products');
@@ -33,6 +35,11 @@ export const getProducts = createSelector(
     getProductFeatureState,
     state => state.products
 );
+export const getError = createSelector(
+    getProductFeatureState,
+    state => state.error
+);
+
 
 export const ProductReducer = (state = initialState, action: ProductActions): ProductState => {
     switch (action.type) {
@@ -64,6 +71,20 @@ export const ProductReducer = (state = initialState, action: ProductActions): Pr
                     description: '',
                     starRating: 0
                 }
+            };
+
+        case ProductActionTypes.LoadProductsSuccess:
+            return {
+                ...state,
+                products: action.payload,
+                error: ''
+            };
+
+        case ProductActionTypes.LoadProductsFail:
+            return {
+                ...state,
+                products: [],
+                error: action.payload
             };
 
         default:
